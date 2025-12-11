@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Movie Reviews</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Movie Review Website</h1>
+    {% if session.get("user_id") %}
+    <a href="{{ url_for('logout') }}">Logout</a>
+    {% else %}
+    <a href="{{ url_for('login') }}">Login</a>
+    <a href="{{ url_for('register') }}">Register</a>
+    {% endif %}
+
+    <h2>Movies</h2>
+    {% for movie in movies %}
+    <div class="movie">
+      <h3>{{ movie["Name"] }} ({{ movie["Year"] }})</h3>
+      <p><strong>Genre:</strong> {{ movie["Genre"] }}</p>
+      <p>{{ movie["Summary"] }}</p>
+      {% if movie["Review"] %}
+      <p>
+        <strong>Review by {{ movie["Username"] }}:</strong> {{ movie["Review"]
+        }} ({{ movie["Rating"] }}/5)
+      </p>
+      {% endif %} {% if session.get("user_id") %}
+      <form action="{{ url_for('review', movie_id=movie['ID']) }}" method="get">
+        <button type="submit">Add Review</button>
+      </form>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </body>
+</html>
