@@ -1,0 +1,33 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
+
+h1,
+h2 {
+  color: #333;
+}
+
+.movie {
+  background: #fff;
+  margin: 15px 0;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #ccc;
+}
+
+form {
+  margin-top: 10px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 5px 10px;
+}
