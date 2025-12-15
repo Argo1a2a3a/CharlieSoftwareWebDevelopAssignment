@@ -9,6 +9,7 @@
   </head>
   <body>
     <h1>Movie Review Website</h1>
+
     {% if session.get("user_id") %}
     <a href="{{ url_for('logout') }}">Logout</a>
     {% else %}
@@ -22,12 +23,30 @@
       <h3>{{ movie["Name"] }} ({{ movie["Year"] }})</h3>
       <p><strong>Genre:</strong> {{ movie["Genre"] }}</p>
       <p>{{ movie["Summary"] }}</p>
-      {% if movie["Review"] %}
+
+      {% for review in reviews_by_movie.get(movie["ID"], []) %}
       <p>
-        <strong>Review by {{ movie["Username"] }}:</strong> {{ movie["Review"]
-        }} ({{ movie["Rating"] }}/5)
+        <strong>Review by {{ review["Username"] }}:</strong>
+        {{ review["Review"] }} ({{ review["Rating"] }}/5)
       </p>
-      {% endif %} {% if session.get("user_id") %}
+
+      {% if session.get("user_id") == review["Users_Id"] %}
+      <form
+        action="{{ url_for('review', movie_id=movie['ID']) }}"
+        method="get"
+        style="display: inline"
+      >
+        <input type="hidden" name="review_id" value="{{ review['ID'] }}" />
+        <button type="submit">Edit</button>
+      </form>
+      <form
+        action="{{ url_for('delete_review', review_id=review['ID']) }}"
+        method="post"
+        style="display: inline"
+      >
+        <button type="submit">Delete</button>
+      </form>
+      {% endif %} {% endfor %} {% if session.get("user_id") %}
       <form action="{{ url_for('review', movie_id=movie['ID']) }}" method="get">
         <button type="submit">Add Review</button>
       </form>

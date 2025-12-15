@@ -2,9 +2,8 @@ from flask import Flask, render_template, request, redirect, session, url_for
 import sqlite3
 from datetime import date
 
-
 app = Flask(__name__)
-app.secret_key = "secret-key"  # Needed for sessions
+app.secret_key = "secret-key"
 
 
 def get_db():
@@ -16,16 +15,27 @@ def get_db():
 @app.route("/")
 def index():
     db = get_db()
-    movies = db.execute(
+
+    # Get all movies
+    movies = db.execute("SELECT * FROM movies").fetchall()
+
+    # Get all reviews
+    reviews = db.execute(
         """
-        SELECT m.ID, m.Name, m.Genre, m.Year, m.Summary,
-               r.ID as ReviewID, r.Review, r.Rating, r.Date, u.Username
-        FROM movies m
-        LEFT JOIN reviews r ON m.ID = r.Movies_Id
-        LEFT JOIN users u ON r.Users_Id = u.ID
-    """
+        SELECT r.ID, r.Review, r.Rating, r.Movies_Id, r.Users_Id, u.Username
+        FROM reviews r
+        JOIN users u ON r.Users_Id = u.ID
+        """
     ).fetchall()
-    return render_template("index.html", movies=movies)
+
+    # Map reviews to their movies
+    reviews_by_movie = {}
+    for r in reviews:
+        reviews_by_movie.setdefault(r["Movies_Id"], []).append(r)
+
+    return render_template(
+        "index.html", movies=movies, reviews_by_movie=reviews_by_movie
+    )
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -69,33 +79,38 @@ def logout():
 def review(movie_id):
     if "user_id" not in session:
         return redirect(url_for("login"))
+
+    db = get_db()
+    review_id = request.args.get("review_id")
+    existing_review = None
+
+    if review_id:
+        existing_review = db.execute(
+            "SELECT * FROM reviews WHERE ID=? AND Users_Id=?",
+            (review_id, session["user_id"]),
+        ).fetchone()
+
     if request.method == "POST":
         review_text = request.form["review"]
         rating = request.form["rating"]
         today = date.today().isoformat()
-        db = get_db()
-        db.execute(
-            "INSERT INTO reviews (Date, Review, Rating, Movies_Id, Users_Id) VALUES (?, ?, ?, ?, ?)",
-            (today, review_text, rating, movie_id, session["user_id"]),
-        )
+
+        if existing_review:
+            db.execute(
+                "UPDATE reviews SET Review=?, Rating=?, Date=? WHERE ID=?",
+                (review_text, rating, today, review_id),
+            )
+        else:
+            db.execute(
+                "INSERT INTO reviews (Date, Review, Rating, Movies_Id, Users_Id) VALUES (?, ?, ?, ?, ?)",
+                (today, review_text, rating, movie_id, session["user_id"]),
+            )
         db.commit()
         return redirect(url_for("index"))
-    return render_template("review_form.html", movie_id=movie_id)
 
-
-@app.route("/review/update/<int:review_id>", methods=["POST"])
-def update_review(review_id):
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-    review_text = request.form["review"]
-    rating = request.form["rating"]
-    db = get_db()
-    db.execute(
-        "UPDATE reviews SET Review=?, Rating=? WHERE ID=? AND Users_Id=?",
-        (review_text, rating, review_id, session["user_id"]),
+    return render_template(
+        "review_form.html", movie_id=movie_id, review=existing_review
     )
-    db.commit()
-    return redirect(url_for("index"))
 
 
 @app.route("/review/delete/<int:review_id>", methods=["POST"])
