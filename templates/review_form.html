@@ -1,25 +1,37 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- Title shown in the browser tab -->
     <title>Add Review</title>
+
+    <!-- Links the external CSS stylesheet -->
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
   </head>
   <body>
+    <!-- Page heading -->
     <h2>Add Review</h2>
+
+    <!-- Review form that sends data to the server using POST -->
     <form method="post">
+      <!-- Label and text area for writing the review -->
       <label>Review:</label>
       <textarea name="review" required></textarea>
+
+      <!-- Label and dropdown menu for selecting a rating -->
       <label>Rating:</label>
       <select name="rating">
+        <!-- Rating options from 1 to 5 stars -->
         <option value="1">⭐</option>
         <option value="2">⭐⭐</option>
         <option value="3">⭐⭐⭐</option>
         <option value="4">⭐⭐⭐⭐</option>
         <option value="5">⭐⭐⭐⭐⭐</option>
       </select>
+
+      <!-- Button to submit the review -->
       <button type="submit">Submit</button>
     </form>
   </body>

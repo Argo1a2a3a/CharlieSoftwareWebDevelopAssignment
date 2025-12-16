@@ -1,19 +1,30 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- Title shown in the browser tab -->
     <title>Register</title>
+
+    <!-- Links the external CSS stylesheet -->
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
   </head>
   <body>
+    <!-- Page heading -->
     <h2>Register</h2>
+
+    <!-- Registration form that sends data to the server using POST -->
     <form method="post">
+      <!-- Label and input field for the username -->
       <label>Username:</label>
       <input type="text" name="username" required />
+
+      <!-- Label and input field for the password -->
       <label>Password:</label>
       <input type="password" name="password" required />
+
+      <!-- Button to submit the registration form -->
       <button type="submit">Register</button>
     </form>
   </body>

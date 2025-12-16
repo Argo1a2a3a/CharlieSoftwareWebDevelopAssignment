@@ -1,3 +1,4 @@
+-- Creating tables
 CREATE TABLE users (
   ID INTEGER PRIMARY KEY AUTOINCREMENT,
   Username TEXT NOT NULL,
@@ -21,6 +22,7 @@ CREATE TABLE reviews (
   Users_Id INTEGER NOT NULL
 );
 
+-- Inserting movies
 INSERT INTO movies (Name, Genre, Year, Summary)
 VALUES 
 ("The Greatest Showman", "Musical/Drama", 2017, "The Greatest Showman tells the story of P.T. Barnum, who rises from humble beginnings to create a circus that celebrates uniqueness."),
@@ -61,13 +63,15 @@ VALUES
 ("Bubble", "Animation/Action", 2022, "Parkour battles erupt in a futuristic Tokyo."),
 ("Barbie", "Fantasy/Comedy", 2023, "Barbie goes on a journey of self-discovery in the real world."),
 ("Megamind", "Animation/Action/Comedy", 2010, "A supervillain must discover his purpose after defeating his nemesis."),
-("Five Nights at Freddy's", "Horror/Mystery", 2023, "Security guards face animatronic horrors in a night-shift survival scenario.");
+("Five Nights at Freddy's", "Horror/Mystery", 2023, "Security guards face animatronic horrors in a night-shift survival scenario."),
+("Fight Club", "Crime/Drama/Thriller", 1999, "Fight Club follows an unnamed Narrator who, disillusioned with his consumerist lifestyle, forms an underground fight club with the enigmatic Tyler Durden, leading to chaos and self-discovery.");
 
-
+-- Clearing tables
 DELETE FROM movies;
 DELETE FROM reviews;
 DELETE FROM users;
 
+-- Deleting tables
 DROP TABLE movies;
 DROP TABLE reviews;
 DROP TABLE users;

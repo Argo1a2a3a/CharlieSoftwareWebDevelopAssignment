@@ -1,44 +1,67 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <!-- Title shown in the browser tab -->
     <title>Movie Reviews</title>
+
+    <!-- Links the external CSS stylesheet -->
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
   </head>
   <body>
+    <!-- Main heading of the website -->
     <h1>Movie Review Website</h1>
 
+    <!-- Checks if a user is logged in -->
     {% if session.get("user_id") %}
+    <!-- Shows logout link if the user is logged in -->
     <a href="{{ url_for('logout') }}">Logout</a>
     {% else %}
+    <!-- Shows login and register links if the user is not logged in -->
     <a href="{{ url_for('login') }}">Login</a>
     <a href="{{ url_for('register') }}">Register</a>
     {% endif %}
 
+    <!-- Section heading for the movie list -->
     <h2>Movies</h2>
+
+    <!-- Loops through each movie passed from Flask -->
     {% for movie in movies %}
     <div class="movie">
+      <!-- Displays movie title and release year -->
       <h3>{{ movie["Name"] }} ({{ movie["Year"] }})</h3>
+
+      <!-- Displays movie genre -->
       <p><strong>Genre:</strong> {{ movie["Genre"] }}</p>
+
+      <!-- Displays movie summary -->
       <p>{{ movie["Summary"] }}</p>
 
+      <!-- Loops through all reviews for the current movie -->
       {% for review in reviews_by_movie.get(movie["ID"], []) %}
       <p>
+        <!-- Displays the review author, text, and rating -->
         <strong>Review by {{ review["Username"] }}:</strong>
         {{ review["Review"] }} ({{ review["Rating"] }}/5)
       </p>
 
+      <!-- Checks if the logged-in user is the author of the review -->
       {% if session.get("user_id") == review["Users_Id"] %}
+
+      <!-- Button to edit the user's own review -->
       <form
         action="{{ url_for('review', movie_id=movie['ID']) }}"
         method="get"
         style="display: inline"
       >
+        <!-- Passes the review ID to allow editing -->
         <input type="hidden" name="review_id" value="{{ review['ID'] }}" />
         <button type="submit">Edit</button>
       </form>
+
+      <!-- Button to delete the user's own review -->
       <form
         action="{{ url_for('delete_review', review_id=review['ID']) }}"
         method="post"
@@ -46,7 +69,11 @@
       >
         <button type="submit">Delete</button>
       </form>
-      {% endif %} {% endfor %} {% if session.get("user_id") %}
+
+      {% endif %} {% endfor %}
+
+      <!-- Shows the add review button only if the user is logged in -->
+      {% if session.get("user_id") %}
       <form action="{{ url_for('review', movie_id=movie['ID']) }}" method="get">
         <button type="submit">Add Review</button>
       </form>
